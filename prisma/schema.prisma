@@ -1,0 +1,351 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  name               String
+  email              String              @unique
+  password           String
+  roleId             String
+  refreshToken       String?
+  role               Role                @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  scopeLocationId    String?
+  scopeLocation      Location?           @relation("UserScope", fields: [scopeLocationId], references: [id], onDelete: SetNull)
+  assets             Asset[]             @relation("AssetAssignee")
+  workOrders         WorkOrder[]         @relation("WorkOrderAssignee")
+  custodyAssignments CustodyAssignment[] @relation("CustodyUser")
+  transfersFrom      Transfer[]          @relation("TransferFromUser")
+  transfersTo        Transfer[]          @relation("TransferToUser")
+  auditLogs          AuditLog[]
+  stocktakeSessions  StocktakeSession[]  @relation("StocktakeCreator")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([roleId])
+  @@index([email])
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  users       User[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  code        String           @unique
+  name        String
+  description String?
+  roles       RolePermission[]
+  createdAt   DateTime         @default(now())
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model Location {
+  id          String     @id @default(uuid())
+  name        String
+  code        String     @unique
+  type        String     @default("LOCATION")
+  address     String?
+  description String?
+  parentId    String?
+  parent      Location?  @relation("LocationTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Location[] @relation("LocationTree")
+  usersInScope User[]    @relation("UserScope")
+  assets      Asset[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([parentId])
+  @@index([name])
+}
+
+model AssetCategory {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique
+  description String?
+  assets      Asset[]
+  maintenanceTemplates MaintenanceTemplate[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Asset {
+  id                    String                 @id @default(uuid())
+  assetTag              String                 @unique
+  qrCodeUrl             String?
+  name                  String
+  serialNumber          String?                @unique
+  model                 String?
+  status                String                 @default("ACTIVE")
+  condition             String?
+  purchaseDate          DateTime?
+  purchaseCost          Decimal?
+  usefulLifeYears       Int?
+  value                 Decimal?
+  metadata              String?
+  categoryId            String
+  locationId            String
+  assignedToUserId      String?
+  category              AssetCategory          @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  location              Location               @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  assignedTo            User?                  @relation("AssetAssignee", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  purchaseOrder         PurchaseOrder?
+  warranty              Warranty?
+  retirement            Retirement?
+  custodyAssignments    CustodyAssignment[]
+  transfers             Transfer[]
+  workOrders            WorkOrder[]
+  attachments           Attachment[]
+  stocktakeObservations StocktakeObservation[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  @@index([categoryId])
+  @@index([locationId])
+  @@index([assignedToUserId])
+  @@index([status])
+}
+
+model Supplier {
+  id             String          @id @default(uuid())
+  name           String
+  email          String?
+  phone          String?
+  address        String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  purchaseOrders PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id          String    @id @default(uuid())
+  orderNumber String    @unique
+  supplierId  String
+  assetId     String?   @unique
+  status      String    @default("DRAFT")
+  orderDate   DateTime  @default(now())
+  totalAmount Decimal?
+  metadata    String?
+  supplier    Supplier  @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  invoices    Invoice[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([supplierId])
+  @@index([status])
+}
+
+model Invoice {
+  id              String         @id @default(uuid())
+  invoiceNumber   String         @unique
+  purchaseOrderId String?
+  supplierId      String?
+  amount          Decimal
+  issueDate       DateTime
+  dueDate         DateTime?
+  status          String         @default("UNPAID")
+  metadata        String?
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id], onDelete: SetNull)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([purchaseOrderId])
+  @@index([supplierId])
+  @@index([status])
+}
+
+model Warranty {
+  id        String   @id @default(uuid())
+  assetId   String   @unique
+  provider  String?
+  startDate DateTime
+  endDate   DateTime
+  terms     String?
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([endDate])
+}
+
+model CustodyAssignment {
+  id         String    @id @default(uuid())
+  assetId    String
+  userId     String
+  assignedAt DateTime  @default(now())
+  returnedAt DateTime?
+  notes      String?
+  asset      Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  user       User      @relation("CustodyUser", fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([assetId])
+  @@index([userId])
+}
+
+model Transfer {
+  id                  String   @id @default(uuid())
+  assetId             String
+  fromLocationId      String?
+  toLocationId        String
+  fromUserId          String?
+  toUserId            String?
+  transferredByUserId String
+  transferredAt       DateTime @default(now())
+  reason              String?
+  asset               Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  fromUser            User?    @relation("TransferFromUser", fields: [fromUserId], references: [id], onDelete: SetNull)
+  toUser              User?    @relation("TransferToUser", fields: [toUserId], references: [id], onDelete: SetNull)
+
+  @@index([assetId])
+  @@index([toLocationId])
+}
+
+model MaintenanceTemplate {
+  id            String      @id @default(uuid())
+  name          String
+  description   String?
+  frequencyDays Int?
+  tasks         String?
+  categoryId    String?
+  category      AssetCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  workOrders    WorkOrder[]
+}
+
+model WorkOrder {
+  id               String               @id @default(uuid())
+  assetId          String
+  templateId       String?
+  assignedToUserId String?
+  title            String
+  description      String?
+  priority         String               @default("MEDIUM")
+  status           String               @default("OPEN")
+  dueDate          DateTime?
+  completedAt      DateTime?
+  asset            Asset                @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  template         MaintenanceTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  assignedTo       User?                @relation("WorkOrderAssignee", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  serviceEvents    ServiceEvent[]
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([assetId])
+  @@index([status])
+}
+
+model ServiceEvent {
+  id          String    @id @default(uuid())
+  workOrderId String
+  eventDate   DateTime  @default(now())
+  technician  String?
+  notes       String?
+  cost        Decimal?
+  laborCost   Decimal     @default(0)
+  partsCost   Decimal     @default(0)
+  downtimeHours Float     @default(0)
+  outcome     String      @default("completed")
+  completedAt DateTime    @default(now())
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@index([workOrderId])
+}
+
+model Retirement {
+  id            String   @id @default(uuid())
+  assetId       String   @unique
+  retiredAt     DateTime @default(now())
+  reason        String
+  residualValue Decimal?
+  approvedBy    String?
+  asset         Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([retiredAt])
+}
+
+model Attachment {
+  id         String   @id @default(uuid())
+  assetId    String?
+  entityType String
+  entityId   String
+  fileName   String
+  fileUrl    String
+  mimeType   String?
+  metadata   String?
+  asset      Asset?   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([assetId])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  entityType String
+  entityId   String
+  action     String
+  userId     String?
+  details    String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model StocktakeSession {
+  id              String                 @id @default(uuid())
+  name            String
+  locationId      String?
+  status          String                 @default("OPEN")
+  startedAt       DateTime               @default(now())
+  completedAt     DateTime?
+  createdByUserId String
+  createdBy       User                   @relation("StocktakeCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  observations    StocktakeObservation[]
+
+  @@index([locationId])
+  @@index([status])
+}
+
+model StocktakeObservation {
+  id         String           @id @default(uuid())
+  sessionId  String
+  assetId    String
+  observedAt DateTime         @default(now())
+  status     String
+  notes      String?
+  session    StocktakeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  asset      Asset            @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, assetId])
+  @@index([assetId])
+}

@@ -1,0 +1,12 @@
+{
+  "info": { "name": "AssetHub API", "_postman_id": "assethub-part3", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }, { "key": "token", "value": "" }],
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } },
+    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"admin@assethub.local\",\"password\":\"Admin@123\"}" }, "url": "{{baseUrl}}/auth/login" } },
+    { "name": "Dashboard summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/dashboard/summary" } },
+    { "name": "Risk queue", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/dashboard/risk-queue" } },
+    { "name": "Assets", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/assets?page=1&limit=20" } },
+    { "name": "Warranty expiry", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/warranties/expiring?days=30" } }
+  ]
+}
