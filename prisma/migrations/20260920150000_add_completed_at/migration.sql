@@ -1,1 +1,0 @@
-ALTER TABLE "WorkOrder" ADD COLUMN "completedAt" DATETIME;
