@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
+    "swagger": "node scripts/swagger.js",
+    "docs:pdf": "node scripts/generate-api-pdf.js",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:seed": "prisma db seed",
     "prisma:studio": "prisma studio",
@@ -14,6 +16,7 @@
     "db:seed": "prisma db seed",
     "postinstall": "prisma generate",
     "test": "jest --runInBand",
+    "test:server": "node scripts/test-server.js",
     "test:acceptance": "jest --runInBand tests/acceptance",
     "test:cov": "jest --runInBand --coverage"
   },

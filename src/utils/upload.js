@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
-const uploadDir = path.join(__dirname, '../../uploads');
+const uploadDir = process.env.VERCEL
+  ? path.join(require('os').tmpdir(), 'assethub-imports')
+  : path.join(__dirname, '../../uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({

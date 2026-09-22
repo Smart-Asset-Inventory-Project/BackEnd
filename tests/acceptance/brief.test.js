@@ -1,3 +1,5 @@
+// Remote PostgreSQL workflows perform multiple round trips per test.
+jest.setTimeout(120000);
 process.env.NODE_ENV = 'test';
 require('dotenv').config({ path: '.env.test' });
 const { execFileSync } = require('child_process');
@@ -91,6 +93,8 @@ describe('brief acceptance scenarios', () => {
   test('completing a work order creates a service event', async () => {
     const token = await login('admin');
     const workOrder = await prisma.workOrder.findFirst({ where: { templateId: { not: null }, status: { not: 'COMPLETED' } } });
+    const started = await request(app).put('/work-orders/' + workOrder.id).set('Authorization', 'Bearer ' + token).send({ status: 'IN_PROGRESS' });
+    expect(started.status).toBe(200);
     const completed = await request(app).put(`/work-orders/${workOrder.id}/complete`).set('Authorization', `Bearer ${token}`).send({
       laborCost: 100, partsCost: 50, downtimeHours: 2, outcome: 'Fixed', notes: ''
     });

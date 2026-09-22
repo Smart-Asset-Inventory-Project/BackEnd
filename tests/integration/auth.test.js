@@ -1,3 +1,5 @@
+// Remote PostgreSQL workflows perform multiple round trips per test.
+jest.setTimeout(120000);
 process.env.NODE_ENV = 'test';
 require('dotenv').config({ path: '.env.test' });
 require('../helpers/test-db')();
@@ -9,7 +11,7 @@ describe('authentication API', () => {
   const email = `integration-${Date.now()}@example.com`;
   let role;
   beforeAll(async () => {
-    role = await prisma.role.upsert({ where: { name: 'VIEWER' }, update: {}, create: { name: 'VIEWER' } });
+    role = await prisma.role.upsert({ where: { name: 'CUSTODIAN' }, update: {}, create: { name: 'CUSTODIAN' } });
   });
   afterAll(async () => {
     await prisma.user.deleteMany({ where: { email } });

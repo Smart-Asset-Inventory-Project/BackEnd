@@ -1,3 +1,5 @@
+// Remote PostgreSQL workflows perform multiple round trips per test.
+jest.setTimeout(120000);
 process.env.NODE_ENV = 'test';
 require('dotenv').config({ path: '.env.test' });
 require('../helpers/test-db')();

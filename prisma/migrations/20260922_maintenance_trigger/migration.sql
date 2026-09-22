@@ -1,0 +1,1 @@
+ALTER TABLE "MaintenanceTemplate" ADD COLUMN "triggerType" TEXT NOT NULL DEFAULT 'TIME_BASED';
