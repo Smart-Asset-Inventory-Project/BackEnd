@@ -4,8 +4,9 @@ const auth = require('../middlewares/auth');
 const authorize = require('../middlewares/authorize');
 const audit = require('../utils/audit');
 const { ok, fail } = require('../utils/response');
+const { scope } = require('../services/integrity');
 
-const paginate = req => ({ page: Math.max(1, Number(req.query.page || 1)), limit: Math.min(100, Math.max(1, Number(req.query.limit || 20))) });
+const paginate = req => require('../services/integrity').pagination(req.query);
 
 const retirements = express.Router();
 retirements.use(auth);
@@ -77,6 +78,9 @@ stocktakes.post('/:id/observations', authorize('asset:write'), async (req, res, 
       prisma.asset.findUnique({ where: { id: assetId } })
     ]);
     if (!session || !asset) return fail(res, 'NOT_FOUND', 'Session or asset not found', 404);
+    scope(req, session.locationId);
+    scope(req, asset.locationId);
+    if (session.status !== 'OPEN') return fail(res, 'CONFLICT', 'Stocktake session is closed', 409);
     const item = await prisma.stocktakeObservation.upsert({
       where: { sessionId_assetId: { sessionId: session.id, assetId } },
       update: { status, notes: notes || null, observedAt: new Date() },
@@ -87,6 +91,10 @@ stocktakes.post('/:id/observations', authorize('asset:write'), async (req, res, 
 });
 stocktakes.put('/:id/complete', authorize('asset:write'), async (req, res, next) => {
   try {
+    const session = await prisma.stocktakeSession.findUnique({ where: { id: req.params.id } });
+    if (!session) return fail(res, 'NOT_FOUND', 'Session not found', 404);
+    scope(req, session.locationId);
+    if (session.status !== 'OPEN') return fail(res, 'CONFLICT', 'Stocktake session is closed', 409);
     const item = await prisma.stocktakeSession.update({ where: { id: req.params.id }, data: { status: 'COMPLETED', completedAt: new Date() }, include: { observations: true } });
     ok(res, item);
   } catch (error) { next(error); }
@@ -97,7 +105,7 @@ serviceEvents.use(auth);
 serviceEvents.get('/', async (req, res, next) => {
   try {
     const { page, limit } = paginate(req);
-    const where = req.query.workOrderId ? { workOrderId: req.query.workOrderId } : {};
+    const where = { ...(req.query.workOrderId ? { workOrderId: req.query.workOrderId } : {}), workOrder: { asset: require('../utils/scope').applyScopeFilter(req.scopeIds, {}) } };
     const [data, total] = await prisma.$transaction([
       prisma.serviceEvent.findMany({ where, include: { workOrder: { include: { asset: true } } }, orderBy: { eventDate: 'desc' }, skip: (page - 1) * limit, take: limit }),
       prisma.serviceEvent.count({ where })
@@ -105,5 +113,7 @@ serviceEvents.get('/', async (req, res, next) => {
     ok(res, data, 200, { page, limit, total, pages: Math.ceil(total / limit) });
   } catch (error) { next(error); }
 });
+
+serviceEvents.post('/', authorize('workorder:manage'), require('../controllers/domain').createServiceEvent);
 
 module.exports = { retirements, stocktakes, serviceEvents };

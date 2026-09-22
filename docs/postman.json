@@ -1,12 +1,2737 @@
 {
-  "info": { "name": "AssetHub API", "_postman_id": "assethub-part3", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
-  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }, { "key": "token", "value": "" }],
+  "info": {
+    "name": "AssetHub API",
+    "_postman_id": "assethub-part3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
   "item": [
-    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } },
-    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"admin@assethub.local\",\"password\":\"Admin@123\"}" }, "url": "{{baseUrl}}/auth/login" } },
-    { "name": "Dashboard summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/dashboard/summary" } },
-    { "name": "Risk queue", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/dashboard/risk-queue" } },
-    { "name": "Assets", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/assets?page=1&limit=20" } },
-    { "name": "Warranty expiry", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/warranties/expiring?days=30" } }
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"admin@assethub.local\",\"password\":\"Admin@123\"}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) pm.collectionVariables.set(\"token\", pm.response.json().data.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/dashboard/summary"
+      }
+    },
+    {
+      "name": "Risk queue",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/dashboard/risk-queue"
+      }
+    },
+    {
+      "name": "Asset lifecycle modules",
+      "item": [
+        {
+          "name": "GET /locations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/locations",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/locations",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"name\": \"Room 101\",\n      \"code\": \"ROOM-101\",\n      \"type\": \"room\",\n      \"parentId\": \"{{parentLocationId}}\",\n      \"address\": \"Main campus\",\n      \"description\": \"Lab\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /locations/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/locations/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/locations/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Room 101\",\n    \"code\": \"ROOM-101\",\n    \"type\": \"room\",\n    \"parentId\": \"{{parentLocationId}}\",\n    \"address\": \"Main campus\",\n    \"description\": \"Lab\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /locations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/locations",
+            "description": "Required permission: location:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Room 101\",\n  \"code\": \"ROOM-101\",\n  \"type\": \"room\",\n  \"parentId\": \"{{parentLocationId}}\",\n  \"address\": \"Main campus\",\n  \"description\": \"Lab\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/locations",
+                "description": "Required permission: location:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Room 101\",\n  \"code\": \"ROOM-101\",\n  \"type\": \"room\",\n  \"parentId\": \"{{parentLocationId}}\",\n  \"address\": \"Main campus\",\n  \"description\": \"Lab\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Room 101\",\n    \"code\": \"ROOM-101\",\n    \"type\": \"room\",\n    \"parentId\": \"{{parentLocationId}}\",\n    \"address\": \"Main campus\",\n    \"description\": \"Lab\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /locations/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/locations/{{id}}",
+            "description": "Required permission: location:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Room 101\",\n  \"code\": \"ROOM-101\",\n  \"type\": \"room\",\n  \"parentId\": \"{{parentLocationId}}\",\n  \"address\": \"Main campus\",\n  \"description\": \"Lab\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/locations/{{id}}",
+                "description": "Required permission: location:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Room 101\",\n  \"code\": \"ROOM-101\",\n  \"type\": \"room\",\n  \"parentId\": \"{{parentLocationId}}\",\n  \"address\": \"Main campus\",\n  \"description\": \"Lab\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Room 101\",\n    \"code\": \"ROOM-101\",\n    \"type\": \"room\",\n    \"parentId\": \"{{parentLocationId}}\",\n    \"address\": \"Main campus\",\n    \"description\": \"Lab\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /locations/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/locations/{{id}}",
+            "description": "Required permission: location:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/locations/{{id}}",
+                "description": "Required permission: location:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /assets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/assets",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/assets",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"name\": \"Laptop\",\n      \"assetTag\": \"LAP-001\",\n      \"serialNumber\": \"SN-001\",\n      \"categoryId\": \"{{categoryId}}\",\n      \"locationId\": \"{{locationId}}\",\n      \"status\": \"ACTIVE\",\n      \"condition\": \"GOOD\",\n      \"purchaseDate\": \"2026-01-01\",\n      \"purchaseCost\": \"1000\",\n      \"usefulLifeYears\": 5,\n      \"value\": \"1000\",\n      \"model\": \"Model A\",\n      \"metadata\": \"{\\\"department\\\":\\\"IT\\\"}\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /assets/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/assets/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/assets/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Laptop\",\n    \"assetTag\": \"LAP-001\",\n    \"serialNumber\": \"SN-001\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"locationId\": \"{{locationId}}\",\n    \"status\": \"ACTIVE\",\n    \"condition\": \"GOOD\",\n    \"purchaseDate\": \"2026-01-01\",\n    \"purchaseCost\": \"1000\",\n    \"usefulLifeYears\": 5,\n    \"value\": \"1000\",\n    \"model\": \"Model A\",\n    \"metadata\": \"{\\\"department\\\":\\\"IT\\\"}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /assets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/assets",
+            "description": "Required permission: asset:write. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laptop\",\n  \"assetTag\": \"LAP-001\",\n  \"serialNumber\": \"SN-001\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"locationId\": \"{{locationId}}\",\n  \"status\": \"ACTIVE\",\n  \"condition\": \"GOOD\",\n  \"purchaseDate\": \"2026-01-01\",\n  \"purchaseCost\": 1000,\n  \"usefulLifeYears\": 5,\n  \"value\": 1000,\n  \"model\": \"Model A\",\n  \"metadata\": {\n    \"department\": \"IT\"\n  }\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/assets",
+                "description": "Required permission: asset:write. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Laptop\",\n  \"assetTag\": \"LAP-001\",\n  \"serialNumber\": \"SN-001\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"locationId\": \"{{locationId}}\",\n  \"status\": \"ACTIVE\",\n  \"condition\": \"GOOD\",\n  \"purchaseDate\": \"2026-01-01\",\n  \"purchaseCost\": 1000,\n  \"usefulLifeYears\": 5,\n  \"value\": 1000,\n  \"model\": \"Model A\",\n  \"metadata\": {\n    \"department\": \"IT\"\n  }\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Laptop\",\n    \"assetTag\": \"LAP-001\",\n    \"serialNumber\": \"SN-001\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"locationId\": \"{{locationId}}\",\n    \"status\": \"ACTIVE\",\n    \"condition\": \"GOOD\",\n    \"purchaseDate\": \"2026-01-01\",\n    \"purchaseCost\": \"1000\",\n    \"usefulLifeYears\": 5,\n    \"value\": \"1000\",\n    \"model\": \"Model A\",\n    \"metadata\": \"{\\\"department\\\":\\\"IT\\\"}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /assets/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/assets/{{id}}",
+            "description": "Required permission: asset:write. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laptop\",\n  \"assetTag\": \"LAP-001\",\n  \"serialNumber\": \"SN-001\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"locationId\": \"{{locationId}}\",\n  \"status\": \"ACTIVE\",\n  \"condition\": \"GOOD\",\n  \"purchaseDate\": \"2026-01-01\",\n  \"purchaseCost\": 1000,\n  \"usefulLifeYears\": 5,\n  \"value\": 1000,\n  \"model\": \"Model A\",\n  \"metadata\": {\n    \"department\": \"IT\"\n  }\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/assets/{{id}}",
+                "description": "Required permission: asset:write. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Laptop\",\n  \"assetTag\": \"LAP-001\",\n  \"serialNumber\": \"SN-001\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"locationId\": \"{{locationId}}\",\n  \"status\": \"ACTIVE\",\n  \"condition\": \"GOOD\",\n  \"purchaseDate\": \"2026-01-01\",\n  \"purchaseCost\": 1000,\n  \"usefulLifeYears\": 5,\n  \"value\": 1000,\n  \"model\": \"Model A\",\n  \"metadata\": {\n    \"department\": \"IT\"\n  }\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Laptop\",\n    \"assetTag\": \"LAP-001\",\n    \"serialNumber\": \"SN-001\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"locationId\": \"{{locationId}}\",\n    \"status\": \"ACTIVE\",\n    \"condition\": \"GOOD\",\n    \"purchaseDate\": \"2026-01-01\",\n    \"purchaseCost\": \"1000\",\n    \"usefulLifeYears\": 5,\n    \"value\": \"1000\",\n    \"model\": \"Model A\",\n    \"metadata\": \"{\\\"department\\\":\\\"IT\\\"}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /assets/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/assets/{{id}}",
+            "description": "Required permission: asset:delete. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/assets/{{id}}",
+                "description": "Required permission: asset:delete. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /suppliers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/suppliers",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/suppliers",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"name\": \"Example Supplier\",\n      \"email\": \"sales@example.com\",\n      \"phone\": \"+201000000000\",\n      \"address\": \"Cairo\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /suppliers/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/suppliers/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/suppliers/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Example Supplier\",\n    \"email\": \"sales@example.com\",\n    \"phone\": \"+201000000000\",\n    \"address\": \"Cairo\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /suppliers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/suppliers",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Example Supplier\",\n  \"email\": \"sales@example.com\",\n  \"phone\": \"+201000000000\",\n  \"address\": \"Cairo\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/suppliers",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Supplier\",\n  \"email\": \"sales@example.com\",\n  \"phone\": \"+201000000000\",\n  \"address\": \"Cairo\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Example Supplier\",\n    \"email\": \"sales@example.com\",\n    \"phone\": \"+201000000000\",\n    \"address\": \"Cairo\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /suppliers/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/suppliers/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Example Supplier\",\n  \"email\": \"sales@example.com\",\n  \"phone\": \"+201000000000\",\n  \"address\": \"Cairo\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/suppliers/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Supplier\",\n  \"email\": \"sales@example.com\",\n  \"phone\": \"+201000000000\",\n  \"address\": \"Cairo\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Example Supplier\",\n    \"email\": \"sales@example.com\",\n    \"phone\": \"+201000000000\",\n    \"address\": \"Cairo\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /suppliers/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/suppliers/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/suppliers/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /purchase-orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/purchase-orders",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/purchase-orders",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"orderNumber\": \"PO-001\",\n      \"supplierId\": \"{{supplierId}}\",\n      \"assetId\": \"{{assetId}}\",\n      \"status\": \"DRAFT\",\n      \"orderDate\": \"2026-01-01\",\n      \"totalAmount\": \"1000\",\n      \"metadata\": \"{}\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /purchase-orders/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/purchase-orders/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/purchase-orders/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"orderNumber\": \"PO-001\",\n    \"supplierId\": \"{{supplierId}}\",\n    \"assetId\": \"{{assetId}}\",\n    \"status\": \"DRAFT\",\n    \"orderDate\": \"2026-01-01\",\n    \"totalAmount\": \"1000\",\n    \"metadata\": \"{}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /purchase-orders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/purchase-orders",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderNumber\": \"PO-001\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"assetId\": \"{{assetId}}\",\n  \"status\": \"DRAFT\",\n  \"orderDate\": \"2026-01-01\",\n  \"totalAmount\": 1000,\n  \"metadata\": {}\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/purchase-orders",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"orderNumber\": \"PO-001\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"assetId\": \"{{assetId}}\",\n  \"status\": \"DRAFT\",\n  \"orderDate\": \"2026-01-01\",\n  \"totalAmount\": 1000,\n  \"metadata\": {}\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"orderNumber\": \"PO-001\",\n    \"supplierId\": \"{{supplierId}}\",\n    \"assetId\": \"{{assetId}}\",\n    \"status\": \"DRAFT\",\n    \"orderDate\": \"2026-01-01\",\n    \"totalAmount\": \"1000\",\n    \"metadata\": \"{}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /purchase-orders/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/purchase-orders/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderNumber\": \"PO-001\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"assetId\": \"{{assetId}}\",\n  \"status\": \"DRAFT\",\n  \"orderDate\": \"2026-01-01\",\n  \"totalAmount\": 1000,\n  \"metadata\": {}\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/purchase-orders/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"orderNumber\": \"PO-001\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"assetId\": \"{{assetId}}\",\n  \"status\": \"DRAFT\",\n  \"orderDate\": \"2026-01-01\",\n  \"totalAmount\": 1000,\n  \"metadata\": {}\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"orderNumber\": \"PO-001\",\n    \"supplierId\": \"{{supplierId}}\",\n    \"assetId\": \"{{assetId}}\",\n    \"status\": \"DRAFT\",\n    \"orderDate\": \"2026-01-01\",\n    \"totalAmount\": \"1000\",\n    \"metadata\": \"{}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /purchase-orders/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/purchase-orders/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/purchase-orders/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/invoices",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/invoices",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"invoiceNumber\": \"INV-001\",\n      \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n      \"supplierId\": \"{{supplierId}}\",\n      \"amount\": \"1000\",\n      \"issueDate\": \"2026-01-01\",\n      \"dueDate\": \"2026-02-01\",\n      \"status\": \"UNPAID\",\n      \"metadata\": \"{}\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /invoices/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/invoices/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/invoices/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"invoiceNumber\": \"INV-001\",\n    \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n    \"supplierId\": \"{{supplierId}}\",\n    \"amount\": \"1000\",\n    \"issueDate\": \"2026-01-01\",\n    \"dueDate\": \"2026-02-01\",\n    \"status\": \"UNPAID\",\n    \"metadata\": \"{}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /invoices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/invoices",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceNumber\": \"INV-001\",\n  \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"amount\": 1000,\n  \"issueDate\": \"2026-01-01\",\n  \"dueDate\": \"2026-02-01\",\n  \"status\": \"UNPAID\",\n  \"metadata\": {}\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/invoices",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"invoiceNumber\": \"INV-001\",\n  \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"amount\": 1000,\n  \"issueDate\": \"2026-01-01\",\n  \"dueDate\": \"2026-02-01\",\n  \"status\": \"UNPAID\",\n  \"metadata\": {}\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"invoiceNumber\": \"INV-001\",\n    \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n    \"supplierId\": \"{{supplierId}}\",\n    \"amount\": \"1000\",\n    \"issueDate\": \"2026-01-01\",\n    \"dueDate\": \"2026-02-01\",\n    \"status\": \"UNPAID\",\n    \"metadata\": \"{}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /invoices/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/invoices/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceNumber\": \"INV-001\",\n  \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"amount\": 1000,\n  \"issueDate\": \"2026-01-01\",\n  \"dueDate\": \"2026-02-01\",\n  \"status\": \"UNPAID\",\n  \"metadata\": {}\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/invoices/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"invoiceNumber\": \"INV-001\",\n  \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n  \"supplierId\": \"{{supplierId}}\",\n  \"amount\": 1000,\n  \"issueDate\": \"2026-01-01\",\n  \"dueDate\": \"2026-02-01\",\n  \"status\": \"UNPAID\",\n  \"metadata\": {}\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"invoiceNumber\": \"INV-001\",\n    \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n    \"supplierId\": \"{{supplierId}}\",\n    \"amount\": \"1000\",\n    \"issueDate\": \"2026-01-01\",\n    \"dueDate\": \"2026-02-01\",\n    \"status\": \"UNPAID\",\n    \"metadata\": \"{}\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /invoices/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/invoices/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/invoices/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /warranties",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/warranties",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/warranties",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"assetId\": \"{{assetId}}\",\n      \"provider\": \"Manufacturer\",\n      \"startDate\": \"2026-01-01\",\n      \"endDate\": \"2027-01-01\",\n      \"terms\": \"Parts and labor\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /warranties/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/warranties/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/warranties/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"provider\": \"Manufacturer\",\n    \"startDate\": \"2026-01-01\",\n    \"endDate\": \"2027-01-01\",\n    \"terms\": \"Parts and labor\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /warranties",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/warranties",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"provider\": \"Manufacturer\",\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2027-01-01\",\n  \"terms\": \"Parts and labor\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/warranties",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"provider\": \"Manufacturer\",\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2027-01-01\",\n  \"terms\": \"Parts and labor\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"provider\": \"Manufacturer\",\n    \"startDate\": \"2026-01-01\",\n    \"endDate\": \"2027-01-01\",\n    \"terms\": \"Parts and labor\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /warranties/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/warranties/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"provider\": \"Manufacturer\",\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2027-01-01\",\n  \"terms\": \"Parts and labor\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/warranties/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"provider\": \"Manufacturer\",\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2027-01-01\",\n  \"terms\": \"Parts and labor\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"provider\": \"Manufacturer\",\n    \"startDate\": \"2026-01-01\",\n    \"endDate\": \"2027-01-01\",\n    \"terms\": \"Parts and labor\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /warranties/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/warranties/{{id}}",
+            "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/warranties/{{id}}",
+                "description": "Required permission: procurement:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /custody-assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/custody-assignments",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/custody-assignments",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"assetId\": \"{{assetId}}\",\n      \"userId\": \"{{userId}}\",\n      \"assignedAt\": \"2026-01-01T00:00:00Z\",\n      \"notes\": \"Issued to user\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /custody-assignments/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/custody-assignments/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/custody-assignments/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"userId\": \"{{userId}}\",\n    \"assignedAt\": \"2026-01-01T00:00:00Z\",\n    \"notes\": \"Issued to user\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /custody-assignments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/custody-assignments",
+            "description": "Required permission: custody:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"userId\": \"{{userId}}\",\n  \"assignedAt\": \"2026-01-01T00:00:00Z\",\n  \"notes\": \"Issued to user\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/custody-assignments",
+                "description": "Required permission: custody:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"userId\": \"{{userId}}\",\n  \"assignedAt\": \"2026-01-01T00:00:00Z\",\n  \"notes\": \"Issued to user\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"userId\": \"{{userId}}\",\n    \"assignedAt\": \"2026-01-01T00:00:00Z\",\n    \"notes\": \"Issued to user\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /custody-assignments/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/custody-assignments/{{id}}",
+            "description": "Required permission: custody:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"returnedAt\": \"2026-09-22T09:00:00Z\",\n  \"notes\": \"Returned\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/custody-assignments/{{id}}",
+                "description": "Required permission: custody:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"returnedAt\": \"2026-09-22T09:00:00Z\",\n  \"notes\": \"Returned\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"userId\": \"{{userId}}\",\n    \"assignedAt\": \"2026-01-01T00:00:00Z\",\n    \"notes\": \"Issued to user\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /transfers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/transfers",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/transfers",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"assetId\": \"{{assetId}}\",\n      \"toLocationId\": \"{{destinationLocationId}}\",\n      \"reason\": \"Move to lab\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /transfers/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/transfers/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/transfers/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"toLocationId\": \"{{destinationLocationId}}\",\n    \"reason\": \"Move to lab\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /transfers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/transfers",
+            "description": "Required permission: transfer:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"toLocationId\": \"{{destinationLocationId}}\",\n  \"reason\": \"Move to lab\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/transfers",
+                "description": "Required permission: transfer:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"toLocationId\": \"{{destinationLocationId}}\",\n  \"reason\": \"Move to lab\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"toLocationId\": \"{{destinationLocationId}}\",\n    \"reason\": \"Move to lab\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /maintenance-templates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance-templates",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/maintenance-templates",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"name\": \"Monthly inspection\",\n      \"categoryId\": \"{{categoryId}}\",\n      \"triggerType\": \"TIME_BASED\",\n      \"frequencyDays\": 30,\n      \"tasks\": \"[\\\"Inspect cables\\\",\\\"Check operation\\\"]\",\n      \"description\": \"Monthly checks\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /maintenance-templates/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance-templates/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/maintenance-templates/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Monthly inspection\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"triggerType\": \"TIME_BASED\",\n    \"frequencyDays\": 30,\n    \"tasks\": \"[\\\"Inspect cables\\\",\\\"Check operation\\\"]\",\n    \"description\": \"Monthly checks\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /maintenance-templates",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance-templates",
+            "description": "Required permission: maintenance:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly inspection\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"triggerType\": \"TIME_BASED\",\n  \"frequencyDays\": 30,\n  \"tasks\": [\n    \"Inspect cables\",\n    \"Check operation\"\n  ],\n  \"description\": \"Monthly checks\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/maintenance-templates",
+                "description": "Required permission: maintenance:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Monthly inspection\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"triggerType\": \"TIME_BASED\",\n  \"frequencyDays\": 30,\n  \"tasks\": [\n    \"Inspect cables\",\n    \"Check operation\"\n  ],\n  \"description\": \"Monthly checks\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Monthly inspection\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"triggerType\": \"TIME_BASED\",\n    \"frequencyDays\": 30,\n    \"tasks\": \"[\\\"Inspect cables\\\",\\\"Check operation\\\"]\",\n    \"description\": \"Monthly checks\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /maintenance-templates/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance-templates/{{id}}",
+            "description": "Required permission: maintenance:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly inspection\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"triggerType\": \"TIME_BASED\",\n  \"frequencyDays\": 30,\n  \"tasks\": [\n    \"Inspect cables\",\n    \"Check operation\"\n  ],\n  \"description\": \"Monthly checks\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/maintenance-templates/{{id}}",
+                "description": "Required permission: maintenance:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Monthly inspection\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"triggerType\": \"TIME_BASED\",\n  \"frequencyDays\": 30,\n  \"tasks\": [\n    \"Inspect cables\",\n    \"Check operation\"\n  ],\n  \"description\": \"Monthly checks\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"name\": \"Monthly inspection\",\n    \"categoryId\": \"{{categoryId}}\",\n    \"triggerType\": \"TIME_BASED\",\n    \"frequencyDays\": 30,\n    \"tasks\": \"[\\\"Inspect cables\\\",\\\"Check operation\\\"]\",\n    \"description\": \"Monthly checks\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE /maintenance-templates/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance-templates/{{id}}",
+            "description": "Required permission: maintenance:manage. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/maintenance-templates/{{id}}",
+                "description": "Required permission: maintenance:manage. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"deleted\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /work-orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/work-orders",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/work-orders",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"assetId\": \"{{assetId}}\",\n      \"templateId\": \"{{templateId}}\",\n      \"assignedToUserId\": \"{{userId}}\",\n      \"title\": \"Inspect laptop\",\n      \"description\": \"Check connections\",\n      \"priority\": \"MEDIUM\",\n      \"status\": \"OPEN\",\n      \"dueDate\": \"2026-10-01T09:00:00Z\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /work-orders/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/work-orders/{{id}}",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/work-orders/{{id}}",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"templateId\": \"{{templateId}}\",\n    \"assignedToUserId\": \"{{userId}}\",\n    \"title\": \"Inspect laptop\",\n    \"description\": \"Check connections\",\n    \"priority\": \"MEDIUM\",\n    \"status\": \"OPEN\",\n    \"dueDate\": \"2026-10-01T09:00:00Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /work-orders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/work-orders",
+            "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"templateId\": \"{{templateId}}\",\n  \"assignedToUserId\": \"{{userId}}\",\n  \"title\": \"Inspect laptop\",\n  \"description\": \"Check connections\",\n  \"priority\": \"MEDIUM\",\n  \"status\": \"OPEN\",\n  \"dueDate\": \"2026-10-01T09:00:00Z\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/work-orders",
+                "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"assetId\": \"{{assetId}}\",\n  \"templateId\": \"{{templateId}}\",\n  \"assignedToUserId\": \"{{userId}}\",\n  \"title\": \"Inspect laptop\",\n  \"description\": \"Check connections\",\n  \"priority\": \"MEDIUM\",\n  \"status\": \"OPEN\",\n  \"dueDate\": \"2026-10-01T09:00:00Z\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"templateId\": \"{{templateId}}\",\n    \"assignedToUserId\": \"{{userId}}\",\n    \"title\": \"Inspect laptop\",\n    \"description\": \"Check connections\",\n    \"priority\": \"MEDIUM\",\n    \"status\": \"OPEN\",\n    \"dueDate\": \"2026-10-01T09:00:00Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /work-orders/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/work-orders/{{id}}",
+            "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/work-orders/{{id}}",
+                "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"assetId\": \"{{assetId}}\",\n    \"templateId\": \"{{templateId}}\",\n    \"assignedToUserId\": \"{{userId}}\",\n    \"title\": \"Inspect laptop\",\n    \"description\": \"Check connections\",\n    \"priority\": \"MEDIUM\",\n    \"status\": \"OPEN\",\n    \"dueDate\": \"2026-10-01T09:00:00Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /locations/tree",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/locations/tree",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/locations/tree",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /assets/{id}/history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/assets/{{id}}/history",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/assets/{{id}}/history",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"type\": \"transfer\",\n      \"action\": \"TRANSFERRED\",\n      \"at\": \"2026-09-22T09:00:00Z\",\n      \"data\": {\n        \"assetId\": \"asset-id\",\n        \"fromLocationId\": \"old-id\",\n        \"toLocationId\": \"new-id\"\n      }\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /warranties/expiring",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/warranties/expiring",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/warranties/expiring",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"assetId\": \"{{assetId}}\",\n      \"provider\": \"Manufacturer\",\n      \"startDate\": \"2026-01-01\",\n      \"endDate\": \"2027-01-01\",\n      \"terms\": \"Parts and labor\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /work-orders/due",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/work-orders/due",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/work-orders/due",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"assetId\": \"{{assetId}}\",\n      \"templateId\": \"{{templateId}}\",\n      \"assignedToUserId\": \"{{userId}}\",\n      \"title\": \"Inspect laptop\",\n      \"description\": \"Check connections\",\n      \"priority\": \"MEDIUM\",\n      \"status\": \"OPEN\",\n      \"dueDate\": \"2026-10-01T09:00:00Z\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT /work-orders/{id}/complete",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/work-orders/{{id}}/complete",
+            "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"laborCost\": 100,\n  \"partsCost\": 50,\n  \"downtimeHours\": 2,\n  \"outcome\": \"Fixed\",\n  \"notes\": \"Replaced cable\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/work-orders/{{id}}/complete",
+                "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"laborCost\": 100,\n  \"partsCost\": 50,\n  \"downtimeHours\": 2,\n  \"outcome\": \"Fixed\",\n  \"notes\": \"Replaced cable\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"work-order-id\",\n    \"status\": \"COMPLETED\",\n    \"completedAt\": \"2026-09-22T09:00:00Z\",\n    \"serviceEvents\": [\n      {\n        \"workOrderId\": \"{{workOrderId}}\",\n        \"laborCost\": \"100\",\n        \"partsCost\": \"50\",\n        \"downtimeHours\": 2,\n        \"outcome\": \"Fixed\",\n        \"notes\": \"Replaced cable\",\n        \"cost\": \"150\"\n      }\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /service-events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/service-events",
+            "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/service-events",
+                "description": "Required permission: Authenticated. See docs/api-reference.md for business rules."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"example-id\",\n      \"workOrderId\": \"{{workOrderId}}\",\n      \"laborCost\": \"100\",\n      \"partsCost\": \"50\",\n      \"downtimeHours\": 2,\n      \"outcome\": \"Fixed\",\n      \"notes\": \"Replaced cable\",\n      \"cost\": \"150\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"pages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /service-events",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/service-events",
+            "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"workOrderId\": \"{{workOrderId}}\",\n  \"laborCost\": 100,\n  \"partsCost\": 50,\n  \"downtimeHours\": 2,\n  \"outcome\": \"Fixed\",\n  \"notes\": \"Replaced cable\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/service-events",
+                "description": "Required permission: workorder:manage. See docs/api-reference.md for business rules.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"workOrderId\": \"{{workOrderId}}\",\n  \"laborCost\": 100,\n  \"partsCost\": 50,\n  \"downtimeHours\": 2,\n  \"outcome\": \"Fixed\",\n  \"notes\": \"Replaced cable\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"example-id\",\n    \"workOrderId\": \"{{workOrderId}}\",\n    \"laborCost\": \"100\",\n    \"partsCost\": \"50\",\n    \"downtimeHours\": 2,\n    \"outcome\": \"Fixed\",\n    \"notes\": \"Replaced cable\",\n    \"cost\": \"150\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
   ]
 }

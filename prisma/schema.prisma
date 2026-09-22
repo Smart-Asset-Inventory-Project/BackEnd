@@ -231,6 +231,7 @@ model MaintenanceTemplate {
   name          String
   description   String?
   frequencyDays Int?
+  triggerType   String         @default("TIME_BASED")
   tasks         String?
   categoryId    String?
   category      AssetCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)

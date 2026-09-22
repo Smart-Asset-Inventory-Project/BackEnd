@@ -14,6 +14,7 @@ module.exports = async (req, res, next) => {
         const category = await prisma.assetCategory.findUnique({ where: { code: String(row.categoryCode) } });
         const location = await prisma.location.findUnique({ where: { code: String(row.locationCode) } });
         if (!category || !location) throw new Error('categoryCode or locationCode not found');
+        require('../services/integrity').scope(req, location.id);
         const data = { assetTag: String(row.assetTag), name: String(row.name), serialNumber: row.serialNumber ? String(row.serialNumber) : null, model: row.model, status: row.status, condition: row.condition, categoryId: category.id, locationId: location.id, value: String(row.value || 0) };
         data.qrCodeUrl = await generateAssetQR(data.assetTag);
         const item = await prisma.asset.create({ data }); await audit('Asset', item.id, 'CREATE_IMPORT', req.user.sub, data);
@@ -28,4 +29,7 @@ module.exports = async (req, res, next) => {
       results
     });
   } catch (e) { next(e); }
+  finally {
+    if (req.file?.path) await require('fs/promises').unlink(req.file.path).catch(() => {});
+  }
 };

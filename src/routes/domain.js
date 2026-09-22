@@ -4,6 +4,8 @@ const auth = require('../middlewares/auth');
 const authorize = require('../middlewares/authorize');
 function router(type, permission) {
   const r = express.Router(); r.use(auth);
+  if (type === 'warranty') r.get('/expiring', c.expiring);
+  if (type === 'workOrder') r.get('/due', c.due);
   r.get('/', c.list(type)); r.get('/:id', c.get(type));
   if (type === 'workOrder') r.put('/:id/complete', authorize(permission), c.complete);
   r.post('/', authorize(permission), c.create(type)); r.put('/:id', authorize(permission), c.update(type)); r.delete('/:id', authorize(permission), c.remove(type));

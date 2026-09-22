@@ -56,14 +56,19 @@ try {
   const swaggerUi = require('swagger-ui-express');
   const swaggerSpec = require('./swagger');
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.get('/swagger.json', (_req, res) => res.json(swaggerSpec));
 } catch (_error) {
   app.get('/docs', (_req, res) => res.type('html').send('<h1>AssetHub API</h1>'));
+  app.get('/swagger', (_req, res) => res.type('html').send('<h1>AssetHub API</h1>'));
 }
 
 app.use((_req, res) => res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }));
 app.use(errorHandler);
 
-if (process.env.NODE_ENV !== 'test') require('./jobs/scheduler').startScheduler();
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  require('./jobs/scheduler').startScheduler();
+}
 const port = Number(process.env.PORT || 3000);
 if (require.main === module) app.listen(port, '0.0.0.0', () => console.log(`AssetHub API running on http://0.0.0.0:${port}`));
 

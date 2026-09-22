@@ -3,13 +3,13 @@ const prisma = require('../utils/prisma');
 const { computeRiskScore } = require('../services/rules');
 
 async function createDueWorkOrders() {
-  const templates = await prisma.maintenanceTemplate.findMany();
+  const templates = await prisma.maintenanceTemplate.findMany({ where: { triggerType: 'TIME_BASED' } });
   let created = 0;
   const now = new Date();
   for (const template of templates) {
     const assets = await prisma.asset.findMany({ where: { categoryId: template.categoryId || undefined, status: 'ACTIVE' } });
     for (const asset of assets) {
-      const open = await prisma.workOrder.findFirst({ where: { assetId: asset.id, templateId: template.id, status: 'OPEN' } });
+      const open = await prisma.workOrder.findFirst({ where: { assetId: asset.id, templateId: template.id, status: { in: ['OPEN', 'ASSIGNED', 'IN_PROGRESS'] } } });
       if (open) continue;
       const last = await prisma.workOrder.findFirst({ where: { assetId: asset.id, templateId: template.id, status: 'COMPLETED' }, orderBy: { completedAt: 'desc' } });
       const interval = (template.frequencyDays || 30) * 86400000;

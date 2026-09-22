@@ -2,13 +2,13 @@ const prisma = require('../utils/prisma');
 const bcrypt = require('bcryptjs');
 const service = require('../services/auth');
 const { ok } = require('../utils/response');
-exports.login = async (req, res, next) => { try { ok(res, await service.login(req.body)); } catch (e) { next(e); } };
-exports.refresh = async (req, res, next) => { try { ok(res, await service.refresh(req.body.refreshToken)); } catch (e) { next(e); } };
+const validation = require('../validators/auth');
+exports.login = async (req, res, next) => { try { ok(res, await service.login(validation.login.parse(req.body))); } catch (e) { next(e); } };
+exports.refresh = async (req, res, next) => { try { ok(res, await service.refresh(require('zod').z.object({ refreshToken: require('zod').z.string().min(1) }).parse(req.body).refreshToken)); } catch (e) { next(e); } };
 exports.me = async (req, res, next) => { try { ok(res, await service.me(req.user.sub)); } catch (e) { next(e); } };
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) { const e = new Error('name, email and password are required'); e.code = 'VALIDATION_ERROR'; throw e; }
+    const { name, email, password } = validation.register.parse(req.body);
     // Public registration never accepts a caller-controlled role (privilege escalation).
     const defaultRole = await prisma.role.findUnique({ where: { name: 'CUSTODIAN' } });
     if (!defaultRole) { const e = new Error('Default role is not configured'); e.status = 503; e.code = 'CONFIGURATION_ERROR'; throw e; }
