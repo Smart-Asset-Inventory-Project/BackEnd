@@ -4,7 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { generateAssetQR } = require('../src/services/qrcode');
 
-const permissionCodes = ['asset:read','asset:write','asset:delete','location:manage','category:manage','procurement:manage','custody:manage','transfer:manage','maintenance:manage','workorder:manage','retirement:approve','user:manage','audit:read','dashboard:read'];
+const permissionCodes = ['asset:read','asset:write','asset:delete','location:manage','category:manage','procurement:manage','custody:manage','transfer:manage','maintenance:manage','workorder:manage','retirement:approve','user:manage','audit:read','dashboard:read','riskmodel:train'];
 const daysFromNow = d => new Date(Date.now() + d * 86400000);
 
 async function main() {

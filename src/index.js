@@ -44,7 +44,8 @@ const routers = {
   'purchase-orders': generic('purchase-orders'),
   invoices: generic('invoices'),
   'audit-logs': generic('audit-logs'),
-  dashboard: require('./routes/dashboard')
+  dashboard: require('./routes/dashboard'),
+  'risk-model': require('./routes/risk-model')
 };
 
 for (const [path, router] of Object.entries(routers)) {

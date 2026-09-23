@@ -31,6 +31,6 @@ spec.paths = {
   '/stocktake-sessions/{id}/observations': { post: { ...protectedOperation('Record a stocktake observation', 'post').post, parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' } }], requestBody: jsonBody({ type: 'object', required: ['assetId', 'status'], properties: { assetId: { type: 'string' }, status: { type: 'string' }, notes: { type: 'string' } } }, { assetId: 'asset-id', status: 'FOUND', notes: 'Verified' }) } },
   '/stocktake-sessions/{id}/complete': { put: { ...protectedOperation('Complete a stocktake session', 'put').put, parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' } }] } },
   '/audit-logs': protectedOperation('List audit logs'),
-  '/audit-logs/{id}': { get: { ...protectedOperation('Get an audit log').get, parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' } }] } }
+  '/audit-logs/{id}': { get: { ...protectedOperation('Get an audit log').get, parameters: [{ in: 'path', name: 'id', required: true, schema: { type: 'string' } }] } },
 };
 module.exports = spec;
