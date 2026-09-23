@@ -1,5 +1,12 @@
 node_modules/
 .test-postgres/
+.python-cache/
+.python-runtime/
+.venv-risk/
+__pycache__/
+*.pyc
+src/model/*.pkl
+src/model/*.tmp
 .env
 .env.*
 !.env.example

@@ -7231,6 +7231,658 @@
           }
         }
       }
+    },
+    "/risk-model": {
+      "get": {
+        "summary": "Get model metadata and accepted inputs",
+        "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "dashboard:read",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "status": "ready",
+                    "version": "26f828a4a80e04b9",
+                    "trainedAt": "2026-09-23T09:59:21.383226+00:00",
+                    "algorithm": "RandomForestClassifier",
+                    "featureSchemaVersion": 1,
+                    "datasetSha256": "381acd81316e88bbd40fa2357aecb0b94385e7b90a016d62169bf7139cabea4f",
+                    "datasetRows": 1000,
+                    "trainingRows": 800,
+                    "testRows": 200,
+                    "randomSeed": 42,
+                    "classCounts": {
+                      "High": 402,
+                      "Low": 385,
+                      "Medium": 213
+                    },
+                    "accuracy": 0.9,
+                    "majorityBaselineAccuracy": 0.4,
+                    "macroF1": 0.8841264253163567,
+                    "classificationReport": {
+                      "High": {
+                        "precision": 0.9722222222222222,
+                        "recall": 0.875,
+                        "f1-score": 0.9210526315789473,
+                        "support": 80
+                      },
+                      "Low": {
+                        "precision": 0.9367088607594937,
+                        "recall": 0.961038961038961,
+                        "f1-score": 0.9487179487179487,
+                        "support": 77
+                      },
+                      "Medium": {
+                        "precision": 0.7346938775510204,
+                        "recall": 0.8372093023255814,
+                        "f1-score": 0.782608695652174,
+                        "support": 43
+                      },
+                      "accuracy": 0.9,
+                      "macro avg": {
+                        "precision": 0.8812083201775788,
+                        "recall": 0.8910827544548475,
+                        "f1-score": 0.8841264253163567,
+                        "support": 200
+                      },
+                      "weighted avg": {
+                        "precision": 0.9074809839547633,
+                        "recall": 0.9,
+                        "f1-score": 0.9019383324532064,
+                        "support": 200
+                      }
+                    },
+                    "confusionMatrix": [
+                      [
+                        70,
+                        0,
+                        10
+                      ],
+                      [
+                        0,
+                        74,
+                        3
+                      ],
+                      [
+                        2,
+                        5,
+                        36
+                      ]
+                    ],
+                    "confusionMatrixLabels": [
+                      "High",
+                      "Low",
+                      "Medium"
+                    ],
+                    "sklearnVersion": "1.7.2",
+                    "evaluation": "Stratified random 80/20 holdout; exported model fitted on training rows only.",
+                    "limitation": "Predicts supplied risk labels. Dataset provenance and real-world failure calibration are unverified.",
+                    "classes": [
+                      "High",
+                      "Low",
+                      "Medium"
+                    ],
+                    "acceptedCategories": {
+                      "category": [
+                        "Lab_Equipment",
+                        "Laptop",
+                        "Network_Switch",
+                        "Projector",
+                        "Server",
+                        "Workstation"
+                      ],
+                      "condition": [
+                        "Critical",
+                        "Fair",
+                        "Good",
+                        "Poor"
+                      ],
+                      "status": [
+                        "Active",
+                        "Idle",
+                        "Under_Maintenance"
+                      ],
+                      "priority": [
+                        "Critical",
+                        "High",
+                        "Low",
+                        "Medium"
+                      ]
+                    },
+                    "requiredFeatures": [
+                      "category",
+                      "condition",
+                      "status",
+                      "priority",
+                      "useful_life_years",
+                      "purchase_cost",
+                      "work_orders_count",
+                      "downtime_minutes",
+                      "labor_hours",
+                      "asset_age_years",
+                      "days_to_warranty_expiry"
+                    ],
+                    "numericTrainingRanges": {
+                      "useful_life_years": {
+                        "min": 3,
+                        "max": 10
+                      },
+                      "purchase_cost": {
+                        "min": 410.14,
+                        "max": 7498.62
+                      },
+                      "work_orders_count": {
+                        "min": 0,
+                        "max": 30
+                      },
+                      "downtime_minutes": {
+                        "min": 0,
+                        "max": 4868
+                      },
+                      "labor_hours": {
+                        "min": 0,
+                        "max": 124.51
+                      },
+                      "asset_age_years": {
+                        "min": 0.2,
+                        "max": 12.96
+                      },
+                      "days_to_warranty_expiry": {
+                        "min": -399,
+                        "max": 499
+                      }
+                    },
+                    "trainingMode": "local-admin",
+                    "probabilityMeaning": "Uncalibrated model class probability, not probability of asset failure.",
+                    "training": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing features, invalid category, missing asset data, or local training configuration error"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient permission or out-of-scope asset"
+          },
+          "404": {
+            "description": "Asset not found"
+          },
+          "409": {
+            "description": "Training already running, timed out, or disabled on Vercel"
+          },
+          "500": {
+            "description": "Unexpected server error"
+          }
+        }
+      }
+    },
+    "/risk-model/predict": {
+      "post": {
+        "summary": "Predict risk from supplied features",
+        "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "dashboard:read",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "riskLevel": "High",
+                    "confidence": 0.9251666666666672,
+                    "probabilities": {
+                      "High": 0.9251666666666672,
+                      "Low": 0,
+                      "Medium": 0.07483333333333334
+                    },
+                    "modelVersion": "26f828a4a80e04b9",
+                    "features": {
+                      "category": "Laptop",
+                      "condition": "Good",
+                      "status": "Active",
+                      "priority": "Critical",
+                      "useful_life_years": 10,
+                      "purchase_cost": 4650.48,
+                      "work_orders_count": 20,
+                      "downtime_minutes": 3573,
+                      "labor_hours": 21.65,
+                      "asset_age_years": 9.55,
+                      "days_to_warranty_expiry": -61
+                    },
+                    "warnings": [],
+                    "probabilityMeaning": "Uncalibrated model class probability, not probability of asset failure."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing features, invalid category, missing asset data, or local training configuration error"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient permission or out-of-scope asset"
+          },
+          "404": {
+            "description": "Asset not found"
+          },
+          "409": {
+            "description": "Training already running, timed out, or disabled on Vercel"
+          },
+          "500": {
+            "description": "Unexpected server error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "category",
+                  "condition",
+                  "status",
+                  "priority",
+                  "useful_life_years",
+                  "purchase_cost",
+                  "work_orders_count",
+                  "downtime_minutes",
+                  "labor_hours",
+                  "asset_age_years",
+                  "days_to_warranty_expiry"
+                ],
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "Lab_Equipment",
+                      "Laptop",
+                      "Network_Switch",
+                      "Projector",
+                      "Server",
+                      "Workstation"
+                    ]
+                  },
+                  "condition": {
+                    "type": "string",
+                    "enum": [
+                      "Critical",
+                      "Fair",
+                      "Good",
+                      "Poor"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Active",
+                      "Idle",
+                      "Under_Maintenance"
+                    ]
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "Critical",
+                      "High",
+                      "Low",
+                      "Medium"
+                    ]
+                  },
+                  "useful_life_years": {
+                    "type": "number",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  },
+                  "purchase_cost": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "work_orders_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "downtime_minutes": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "labor_hours": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "asset_age_years": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "days_to_warranty_expiry": {
+                    "type": "number"
+                  }
+                }
+              },
+              "example": {
+                "category": "Laptop",
+                "condition": "Good",
+                "status": "Active",
+                "priority": "Critical",
+                "useful_life_years": 10,
+                "purchase_cost": 4650.48,
+                "work_orders_count": 20,
+                "downtime_minutes": 3573,
+                "labor_hours": 21.65,
+                "asset_age_years": 9.55,
+                "days_to_warranty_expiry": -61
+              }
+            }
+          }
+        }
+      }
+    },
+    "/risk-model/assets/{id}/predict": {
+      "post": {
+        "summary": "Predict risk for an existing asset",
+        "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "dashboard:read",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "assetId": "asset-uuid",
+                    "riskLevel": "High",
+                    "confidence": 0.9251666666666672,
+                    "probabilities": {
+                      "High": 0.9251666666666672,
+                      "Low": 0,
+                      "Medium": 0.07483333333333334
+                    },
+                    "modelVersion": "26f828a4a80e04b9",
+                    "features": {
+                      "category": "Laptop",
+                      "condition": "Good",
+                      "status": "Active",
+                      "priority": "Critical",
+                      "useful_life_years": 10,
+                      "purchase_cost": 4650.48,
+                      "work_orders_count": 20,
+                      "downtime_minutes": 3573,
+                      "labor_hours": 21.65,
+                      "asset_age_years": 9.55,
+                      "days_to_warranty_expiry": -61
+                    },
+                    "warnings": [],
+                    "probabilityMeaning": "Uncalibrated model class probability, not probability of asset failure."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing features, invalid category, missing asset data, or local training configuration error"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient permission or out-of-scope asset"
+          },
+          "404": {
+            "description": "Asset not found"
+          },
+          "409": {
+            "description": "Training already running, timed out, or disabled on Vercel"
+          },
+          "500": {
+            "description": "Unexpected server error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "laborHours"
+                ],
+                "properties": {
+                  "laborHours": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "Lab_Equipment",
+                      "Laptop",
+                      "Network_Switch",
+                      "Projector",
+                      "Server",
+                      "Workstation"
+                    ]
+                  },
+                  "condition": {
+                    "type": "string",
+                    "enum": [
+                      "Critical",
+                      "Fair",
+                      "Good",
+                      "Poor"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Active",
+                      "Idle",
+                      "Under_Maintenance"
+                    ]
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "Critical",
+                      "High",
+                      "Low",
+                      "Medium"
+                    ]
+                  },
+                  "usefulLifeYears": {
+                    "type": "number",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  },
+                  "purchaseCost": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "purchaseDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "warrantyEndDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "example": {
+                "laborHours": 21.65
+              }
+            }
+          }
+        }
+      }
+    },
+    "/risk-model/train": {
+      "post": {
+        "summary": "Train locally; disabled on Vercel",
+        "description": "Local admin operation. Three-minute timeout and one concurrent training process. Uses the server-owned CSV and atomically replaces the JSON model. Vercel returns 409: retrain locally and redeploy.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "riskmodel:train (ADMIN bypass)",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "status": "completed",
+                    "version": "26f828a4a80e04b9",
+                    "trainedAt": "2026-09-23T09:59:21.383226+00:00",
+                    "algorithm": "RandomForestClassifier",
+                    "featureSchemaVersion": 1,
+                    "datasetSha256": "381acd81316e88bbd40fa2357aecb0b94385e7b90a016d62169bf7139cabea4f",
+                    "datasetRows": 1000,
+                    "trainingRows": 800,
+                    "testRows": 200,
+                    "randomSeed": 42,
+                    "classCounts": {
+                      "High": 402,
+                      "Low": 385,
+                      "Medium": 213
+                    },
+                    "accuracy": 0.9,
+                    "majorityBaselineAccuracy": 0.4,
+                    "macroF1": 0.8841264253163567,
+                    "classificationReport": {
+                      "High": {
+                        "precision": 0.9722222222222222,
+                        "recall": 0.875,
+                        "f1-score": 0.9210526315789473,
+                        "support": 80
+                      },
+                      "Low": {
+                        "precision": 0.9367088607594937,
+                        "recall": 0.961038961038961,
+                        "f1-score": 0.9487179487179487,
+                        "support": 77
+                      },
+                      "Medium": {
+                        "precision": 0.7346938775510204,
+                        "recall": 0.8372093023255814,
+                        "f1-score": 0.782608695652174,
+                        "support": 43
+                      },
+                      "accuracy": 0.9,
+                      "macro avg": {
+                        "precision": 0.8812083201775788,
+                        "recall": 0.8910827544548475,
+                        "f1-score": 0.8841264253163567,
+                        "support": 200
+                      },
+                      "weighted avg": {
+                        "precision": 0.9074809839547633,
+                        "recall": 0.9,
+                        "f1-score": 0.9019383324532064,
+                        "support": 200
+                      }
+                    },
+                    "confusionMatrix": [
+                      [
+                        70,
+                        0,
+                        10
+                      ],
+                      [
+                        0,
+                        74,
+                        3
+                      ],
+                      [
+                        2,
+                        5,
+                        36
+                      ]
+                    ],
+                    "confusionMatrixLabels": [
+                      "High",
+                      "Low",
+                      "Medium"
+                    ],
+                    "sklearnVersion": "1.7.2",
+                    "evaluation": "Stratified random 80/20 holdout; exported model fitted on training rows only.",
+                    "limitation": "Predicts supplied risk labels. Dataset provenance and real-world failure calibration are unverified."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing features, invalid category, missing asset data, or local training configuration error"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient permission or out-of-scope asset"
+          },
+          "404": {
+            "description": "Asset not found"
+          },
+          "409": {
+            "description": "Training already running, timed out, or disabled on Vercel"
+          },
+          "500": {
+            "description": "Unexpected server error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false
+              },
+              "example": {}
+            }
+          }
+        }
+      }
     }
   }
 }

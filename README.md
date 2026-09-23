@@ -118,3 +118,9 @@ An isolated PostgreSQL cluster is available on 127.0.0.1:55432. Its generated cr
 ## Flutter backend review
 
 See [Flutter integration](docs/flutter-integration.md) for token handling, response parsing, workflow order, local API access, and deployment prerequisites. The review fixes malformed-auth responses, deleted-user token access, invoice exposure through purchase-order reads, scoped imports/stocktakes, and Vercel temporary import files. Production deployment still requires the additive migration; durable attachment storage and an external maintenance scheduler remain deployment work.
+
+## Trained risk model
+
+See the [risk model Flutter guide](docs/risk-model-flutter-guide.md) for all four endpoints, request/response examples, permissions, Flutter code, training commands, and Vercel deployment steps. Import [risk model OpenAPI](docs/risk-model.openapi.json) or the updated Postman collection. This feature is separate from the existing rule-based dashboard risk queue.
+
+The supplied 1,000-row CSV trains a random forest locally with Python. Its bundled JSON model runs predictions in Node.js on Vercel without Python. Retrain with `npm.cmd run model:train`, regenerate examples with `node scripts/generate-risk-docs.js`, test, and redeploy to update the hosted model. Hosted training is disabled. Local evaluation achieved 90% accuracy on 200 held-out rows; this does not establish real-world failure prediction accuracy. Asset prediction requires caller-provided labor hours because the database does not store them.

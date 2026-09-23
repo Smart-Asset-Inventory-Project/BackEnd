@@ -2732,6 +2732,224 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Risk model",
+      "description": "Predictions run on Vercel; training is local-only.",
+      "item": [
+        {
+          "name": "Get model metadata and accepted inputs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/risk-model",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "status": "OK",
+              "originalRequest": {
+                "method": "GET",
+                "url": "{{baseUrl}}/risk-model",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities."
+              },
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"status\": \"ready\",\n    \"version\": \"26f828a4a80e04b9\",\n    \"trainedAt\": \"2026-09-23T09:59:21.383226+00:00\",\n    \"algorithm\": \"RandomForestClassifier\",\n    \"featureSchemaVersion\": 1,\n    \"datasetSha256\": \"381acd81316e88bbd40fa2357aecb0b94385e7b90a016d62169bf7139cabea4f\",\n    \"datasetRows\": 1000,\n    \"trainingRows\": 800,\n    \"testRows\": 200,\n    \"randomSeed\": 42,\n    \"classCounts\": {\n      \"High\": 402,\n      \"Low\": 385,\n      \"Medium\": 213\n    },\n    \"accuracy\": 0.9,\n    \"majorityBaselineAccuracy\": 0.4,\n    \"macroF1\": 0.8841264253163567,\n    \"classificationReport\": {\n      \"High\": {\n        \"precision\": 0.9722222222222222,\n        \"recall\": 0.875,\n        \"f1-score\": 0.9210526315789473,\n        \"support\": 80\n      },\n      \"Low\": {\n        \"precision\": 0.9367088607594937,\n        \"recall\": 0.961038961038961,\n        \"f1-score\": 0.9487179487179487,\n        \"support\": 77\n      },\n      \"Medium\": {\n        \"precision\": 0.7346938775510204,\n        \"recall\": 0.8372093023255814,\n        \"f1-score\": 0.782608695652174,\n        \"support\": 43\n      },\n      \"accuracy\": 0.9,\n      \"macro avg\": {\n        \"precision\": 0.8812083201775788,\n        \"recall\": 0.8910827544548475,\n        \"f1-score\": 0.8841264253163567,\n        \"support\": 200\n      },\n      \"weighted avg\": {\n        \"precision\": 0.9074809839547633,\n        \"recall\": 0.9,\n        \"f1-score\": 0.9019383324532064,\n        \"support\": 200\n      }\n    },\n    \"confusionMatrix\": [\n      [\n        70,\n        0,\n        10\n      ],\n      [\n        0,\n        74,\n        3\n      ],\n      [\n        2,\n        5,\n        36\n      ]\n    ],\n    \"confusionMatrixLabels\": [\n      \"High\",\n      \"Low\",\n      \"Medium\"\n    ],\n    \"sklearnVersion\": \"1.7.2\",\n    \"evaluation\": \"Stratified random 80/20 holdout; exported model fitted on training rows only.\",\n    \"limitation\": \"Predicts supplied risk labels. Dataset provenance and real-world failure calibration are unverified.\",\n    \"classes\": [\n      \"High\",\n      \"Low\",\n      \"Medium\"\n    ],\n    \"acceptedCategories\": {\n      \"category\": [\n        \"Lab_Equipment\",\n        \"Laptop\",\n        \"Network_Switch\",\n        \"Projector\",\n        \"Server\",\n        \"Workstation\"\n      ],\n      \"condition\": [\n        \"Critical\",\n        \"Fair\",\n        \"Good\",\n        \"Poor\"\n      ],\n      \"status\": [\n        \"Active\",\n        \"Idle\",\n        \"Under_Maintenance\"\n      ],\n      \"priority\": [\n        \"Critical\",\n        \"High\",\n        \"Low\",\n        \"Medium\"\n      ]\n    },\n    \"requiredFeatures\": [\n      \"category\",\n      \"condition\",\n      \"status\",\n      \"priority\",\n      \"useful_life_years\",\n      \"purchase_cost\",\n      \"work_orders_count\",\n      \"downtime_minutes\",\n      \"labor_hours\",\n      \"asset_age_years\",\n      \"days_to_warranty_expiry\"\n    ],\n    \"numericTrainingRanges\": {\n      \"useful_life_years\": {\n        \"min\": 3,\n        \"max\": 10\n      },\n      \"purchase_cost\": {\n        \"min\": 410.14,\n        \"max\": 7498.62\n      },\n      \"work_orders_count\": {\n        \"min\": 0,\n        \"max\": 30\n      },\n      \"downtime_minutes\": {\n        \"min\": 0,\n        \"max\": 4868\n      },\n      \"labor_hours\": {\n        \"min\": 0,\n        \"max\": 124.51\n      },\n      \"asset_age_years\": {\n        \"min\": 0.2,\n        \"max\": 12.96\n      },\n      \"days_to_warranty_expiry\": {\n        \"min\": -399,\n        \"max\": 499\n      }\n    },\n    \"trainingMode\": \"local-admin\",\n    \"probabilityMeaning\": \"Uncalibrated model class probability, not probability of asset failure.\",\n    \"training\": false\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Predict risk from supplied features",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/risk-model/predict",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Laptop\",\n  \"condition\": \"Good\",\n  \"status\": \"Active\",\n  \"priority\": \"Critical\",\n  \"useful_life_years\": 10,\n  \"purchase_cost\": 4650.48,\n  \"work_orders_count\": 20,\n  \"downtime_minutes\": 3573,\n  \"labor_hours\": 21.65,\n  \"asset_age_years\": 9.55,\n  \"days_to_warranty_expiry\": -61\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "status": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "url": "{{baseUrl}}/risk-model/predict",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"category\": \"Laptop\",\n  \"condition\": \"Good\",\n  \"status\": \"Active\",\n  \"priority\": \"Critical\",\n  \"useful_life_years\": 10,\n  \"purchase_cost\": 4650.48,\n  \"work_orders_count\": 20,\n  \"downtime_minutes\": 3573,\n  \"labor_hours\": 21.65,\n  \"asset_age_years\": 9.55,\n  \"days_to_warranty_expiry\": -61\n}"
+                }
+              },
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"riskLevel\": \"High\",\n    \"confidence\": 0.9251666666666672,\n    \"probabilities\": {\n      \"High\": 0.9251666666666672,\n      \"Low\": 0,\n      \"Medium\": 0.07483333333333334\n    },\n    \"modelVersion\": \"26f828a4a80e04b9\",\n    \"features\": {\n      \"category\": \"Laptop\",\n      \"condition\": \"Good\",\n      \"status\": \"Active\",\n      \"priority\": \"Critical\",\n      \"useful_life_years\": 10,\n      \"purchase_cost\": 4650.48,\n      \"work_orders_count\": 20,\n      \"downtime_minutes\": 3573,\n      \"labor_hours\": 21.65,\n      \"asset_age_years\": 9.55,\n      \"days_to_warranty_expiry\": -61\n    },\n    \"warnings\": [],\n    \"probabilityMeaning\": \"Uncalibrated model class probability, not probability of asset failure.\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Predict risk for an existing asset",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/risk-model/assets/{{assetId}}/predict",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"laborHours\": 21.65\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "status": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "url": "{{baseUrl}}/risk-model/assets/{{assetId}}/predict",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "description": "Required permission: dashboard:read. Class probabilities are not calibrated failure probabilities.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"laborHours\": 21.65\n}"
+                }
+              },
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"assetId\": \"asset-uuid\",\n    \"riskLevel\": \"High\",\n    \"confidence\": 0.9251666666666672,\n    \"probabilities\": {\n      \"High\": 0.9251666666666672,\n      \"Low\": 0,\n      \"Medium\": 0.07483333333333334\n    },\n    \"modelVersion\": \"26f828a4a80e04b9\",\n    \"features\": {\n      \"category\": \"Laptop\",\n      \"condition\": \"Good\",\n      \"status\": \"Active\",\n      \"priority\": \"Critical\",\n      \"useful_life_years\": 10,\n      \"purchase_cost\": 4650.48,\n      \"work_orders_count\": 20,\n      \"downtime_minutes\": 3573,\n      \"labor_hours\": 21.65,\n      \"asset_age_years\": 9.55,\n      \"days_to_warranty_expiry\": -61\n    },\n    \"warnings\": [],\n    \"probabilityMeaning\": \"Uncalibrated model class probability, not probability of asset failure.\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Train locally; disabled on Vercel",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/risk-model/train",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Local admin operation. Three-minute timeout and one concurrent training process. Uses the server-owned CSV and atomically replaces the JSON model. Vercel returns 409: retrain locally and redeploy.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "status": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "url": "{{baseUrl}}/risk-model/train",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "description": "Local admin operation. Three-minute timeout and one concurrent training process. Uses the server-owned CSV and atomically replaces the JSON model. Vercel returns 409: retrain locally and redeploy.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              },
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"status\": \"completed\",\n    \"version\": \"26f828a4a80e04b9\",\n    \"trainedAt\": \"2026-09-23T09:59:21.383226+00:00\",\n    \"algorithm\": \"RandomForestClassifier\",\n    \"featureSchemaVersion\": 1,\n    \"datasetSha256\": \"381acd81316e88bbd40fa2357aecb0b94385e7b90a016d62169bf7139cabea4f\",\n    \"datasetRows\": 1000,\n    \"trainingRows\": 800,\n    \"testRows\": 200,\n    \"randomSeed\": 42,\n    \"classCounts\": {\n      \"High\": 402,\n      \"Low\": 385,\n      \"Medium\": 213\n    },\n    \"accuracy\": 0.9,\n    \"majorityBaselineAccuracy\": 0.4,\n    \"macroF1\": 0.8841264253163567,\n    \"classificationReport\": {\n      \"High\": {\n        \"precision\": 0.9722222222222222,\n        \"recall\": 0.875,\n        \"f1-score\": 0.9210526315789473,\n        \"support\": 80\n      },\n      \"Low\": {\n        \"precision\": 0.9367088607594937,\n        \"recall\": 0.961038961038961,\n        \"f1-score\": 0.9487179487179487,\n        \"support\": 77\n      },\n      \"Medium\": {\n        \"precision\": 0.7346938775510204,\n        \"recall\": 0.8372093023255814,\n        \"f1-score\": 0.782608695652174,\n        \"support\": 43\n      },\n      \"accuracy\": 0.9,\n      \"macro avg\": {\n        \"precision\": 0.8812083201775788,\n        \"recall\": 0.8910827544548475,\n        \"f1-score\": 0.8841264253163567,\n        \"support\": 200\n      },\n      \"weighted avg\": {\n        \"precision\": 0.9074809839547633,\n        \"recall\": 0.9,\n        \"f1-score\": 0.9019383324532064,\n        \"support\": 200\n      }\n    },\n    \"confusionMatrix\": [\n      [\n        70,\n        0,\n        10\n      ],\n      [\n        0,\n        74,\n        3\n      ],\n      [\n        2,\n        5,\n        36\n      ]\n    ],\n    \"confusionMatrixLabels\": [\n      \"High\",\n      \"Low\",\n      \"Medium\"\n    ],\n    \"sklearnVersion\": \"1.7.2\",\n    \"evaluation\": \"Stratified random 80/20 holdout; exported model fitted on training rows only.\",\n    \"limitation\": \"Predicts supplied risk labels. Dataset provenance and real-world failure calibration are unverified.\"\n  }\n}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

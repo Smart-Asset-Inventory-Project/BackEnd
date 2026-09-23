@@ -18,7 +18,9 @@
     "test": "jest --runInBand",
     "test:server": "node scripts/test-server.js",
     "test:acceptance": "jest --runInBand tests/acceptance",
-    "test:cov": "jest --runInBand --coverage"
+    "test:cov": "jest --runInBand --coverage",
+    "model:train": "node scripts/train-risk-model.js",
+    "test:risk-model": "jest --runInBand tests/unit/risk-model.test.js tests/unit/risk-training.test.js tests/integration/risk-model.test.js"
   },
   "keywords": [
     "assethub",

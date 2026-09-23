@@ -1,0 +1,12 @@
+.env*
+.test-postgres/
+.python-cache/
+.python-runtime/
+.venv-risk/
+**/__pycache__/
+tests/
+src/model/*.pkl
+src/model/*.csv
+src/model/risk-model-parity.json
+uploads/
+folders/
